@@ -3,21 +3,20 @@
 
  Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env1
 
-29/11/2023  12:29    <DIR>          .
-29/11/2023  12:21    <DIR>          ..
+29/11/2023  12:38    <DIR>          .
+29/11/2023  12:38    <DIR>          ..
 29/11/2023  12:18                 4 13477.dat
 29/11/2023  12:18                 4 19210.dat
 29/11/2023  12:18                 4 20283.dat
 29/11/2023  12:18                 4 28622.dat
-29/11/2023  12:29                 0 dir_structure.txt
 29/11/2023  12:21    <DIR>          Reflections
 29/11/2023  12:21    <DIR>          Travel
-               5 File(s)             16 bytes
+               4 File(s)             16 bytes
 
  Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env1\Reflections
 
 29/11/2023  12:21    <DIR>          .
-29/11/2023  12:29    <DIR>          ..
+29/11/2023  12:38    <DIR>          ..
 29/11/2023  12:18                 4 14747.dat
 29/11/2023  12:18                 4 1512.dat
 29/11/2023  12:18    <DIR>          Calendar
@@ -43,7 +42,7 @@
  Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env1\Travel
 
 29/11/2023  12:21    <DIR>          .
-29/11/2023  12:29    <DIR>          ..
+29/11/2023  12:38    <DIR>          ..
 29/11/2023  12:18                 4 11513.dat
 29/11/2023  12:18                 4 26423.dat
 29/11/2023  12:18                 4 4285.dat
@@ -72,5 +71,5 @@
                3 File(s)             12 bytes
 
      Total Files Listed:
-              22 File(s)             84 bytes
-              20 Dir(s)  336,607,281,152 bytes free
+              21 File(s)             84 bytes
+              20 Dir(s)  336,613,953,536 bytes free
