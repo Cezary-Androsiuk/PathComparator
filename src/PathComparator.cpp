@@ -1,10 +1,10 @@
 #include "PathComparator.hpp"
 
-std::vector<PathComparator::DirectoryContent> PathComparator::structure1 = 
-    std::vector<PathComparator::DirectoryContent>();
+std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::old_structure = 
+    std::map<PathComparator::sfp, PathComparator::DirectoryContent>();
     
-std::vector<PathComparator::DirectoryContent> PathComparator::structure2 = 
-    std::vector<PathComparator::DirectoryContent>();
+std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::new_structure = 
+    std::map<PathComparator::sfp, PathComparator::DirectoryContent>();
 
 
 
@@ -31,50 +31,72 @@ inline std::vector<std::string> PathComparator::splitStringBy(std::string str, s
     return vec;
 }
 
-std::vector<PathComparator::DirectoryContent> PathComparator::readFileStructure(sfp path){
-    if(!std::filesystem::is_regular_file(path)){
+std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::readFileStructure(sfp path){
+    if(!fs::is_regular_file(path)){
         throw std::runtime_error("path is not a file!");
     }
 
-    std::vector<DirectoryContent> structure;
+    std::map<sfp, DirectoryContent> structure;
 
     std::fstream file(path, std::ios::in);
     std::string buffer;
 
-    DirectoryContent dirContent;
-    dirContent.path.clear();
+    DirectoryContent dir_content;
+    dir_content.control_val = false;
+    sfp dir_name;
     while(std::getline(file,buffer)){
         if(buffer.empty()) continue;
 
         if(buffer.find(PathComparator::directoryNamePrefix, 0) != std::string::npos){
             // add new Directory
-            if(!dirContent.path.empty())
+            if(dir_content.control_val){
                 // first add previous Directory to structure if not empty
-                structure.push_back(DirectoryContent(dirContent));
-
-            dirContent = DirectoryContent();
-            dirContent.path = buffer.substr(std::string(PathComparator::directoryNamePrefix).size());
+                try
+                {
+                    structure.insert(std::pair<sfp, DirectoryContent>(dir_name, DirectoryContent(dir_content)));
+                }
+                catch(const std::exception& e)
+                {
+                    throw std::runtime_error("error while inserting dir_content (" + std::string(e.what()) + ")");
+                }
+            }
+            dir_content = DirectoryContent();
+            dir_name = buffer.substr(std::string(PathComparator::directoryNamePrefix).size());
+            // printf("NAME: %s\n", dir_name.string().c_str());
         }
         else if(buffer[0] != ' '){
+            // printf("%s\n", buffer.c_str());
             // add file/path to current DirectoryStructure
             auto str = PathComparator::removeMultipleSpaces(buffer);
             auto splited = PathComparator::splitStringBy(str, " ");
             // [0] - date, [1] - time, [2] - <DIR> / size, [3] - name
             if(splited.size() == 4){
                 if(splited[2] == PathComparator::dirMarker){
-                    DirData dd;
-                    dd.name = splited[3];
-                    dd.mod_date = splited[0];
-                    dd.mod_time = splited[1];
-                    dirContent.directories.push_back(dd);
+                    DirData dir_data;
+                    dir_data.mod_date = splited[0];
+                    dir_data.mod_time = splited[1];
+                    try
+                    {
+                        dir_content.directories.insert(std::pair<std::string, DirData>(splited[3], dir_data));
+                    }
+                    catch(const std::exception& e)
+                    {
+                        throw std::runtime_error("error while inserting dir_data (" + std::string(e.what()) + ")");
+                    }
                 }
                 else{
-                    FileData fd;
-                    fd.name = splited[3];
-                    fd.mod_date = splited[0];
-                    fd.mod_time = splited[1];
-                    fd.size = std::stoull(splited[2]);
-                    dirContent.files.push_back(fd);
+                    FileData file_data;
+                    file_data.mod_date = splited[0];
+                    file_data.mod_time = splited[1];
+                    file_data.size = std::stoull(splited[2]);
+                    try
+                    {
+                        dir_content.files.insert(std::pair<std::string, FileData>(splited[3], file_data));
+                    }
+                    catch(const std::exception& e)
+                    {
+                        throw std::runtime_error("error while inserting file_data (" + std::string(e.what()) + ")");
+                    }
                 }
             }
             else{
@@ -86,56 +108,46 @@ std::vector<PathComparator::DirectoryContent> PathComparator::readFileStructure(
     return structure;
 }
 
-std::vector<PathComparator::DirectoryContent> PathComparator::readDirStructure(sfp path){
-    if(!std::filesystem::is_directory(path)){
+std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::readDirStructure(sfp path){
+    if(!fs::is_directory(path)){
         throw std::runtime_error("path is not a directory!");
     }
     
-    std::vector<DirectoryContent> structure;
+    std::map<sfp, DirectoryContent> structure;
 
     return structure;
 }
 
 
-bool PathComparator::compareDirectoryContentObj(const DirectoryContent &a, const DirectoryContent &b){
-
-}
-bool PathComparator::compareDirDataObj(const DirData &a, const DirData &b){
-
-}
-bool PathComparator::compareFileDataObj(const FileData &a, const FileData &b){
-
-}
-
-
 void PathComparator::compareStructuresData(){
 
+    // for(const auto &old_dir : PathComparator::old_structure){
+    //     auto it = std::find(PathComparator::new_structure.begin(), PathComparator::new_structure.end(), old_dir);
+    //     if(it != )
+    // }
+
 }
 
-void PathComparator::compareStructures(sfp path1, sfp path2) noexcept{
+void PathComparator::compareStructures(sfp osp, sfp nsp) noexcept{
     try
     {
-        if(std::filesystem::is_directory(path1))
-            PathComparator::structure1 = PathComparator::readDirStructure(path1);
-        else
-            PathComparator::structure1 = PathComparator::readFileStructure(path1);
+        PathComparator::old_structure = 
+            (fs::is_directory(osp) ? PathComparator::readDirStructure(osp) : PathComparator::readFileStructure(osp));
     }
     catch(const std::exception& e)
     {
-        fprintf(stderr, "error while reading first structure form: %s (%s)\n", path1.string().c_str(), e.what());
+        fprintf(stderr, "error while reading first structure form: %s (%s)\n", osp.string().c_str(), e.what());
         return;
     }
     
     try
     {
-        if(std::filesystem::is_directory(path2))
-            PathComparator::structure2 = PathComparator::readDirStructure(path2);
-        else
-            PathComparator::structure2 = PathComparator::readFileStructure(path2);
+        PathComparator::new_structure = 
+            (fs::is_directory(nsp) ? PathComparator::readDirStructure(nsp) : PathComparator::readFileStructure(nsp));
     }
     catch(const std::exception& e)
     {
-        fprintf(stderr, "error while reading second structure form: %s (%s)\n", path2.string().c_str(), e.what());
+        fprintf(stderr, "error while reading second structure form: %s (%s)\n", nsp.string().c_str(), e.what());
         return;
     }
 

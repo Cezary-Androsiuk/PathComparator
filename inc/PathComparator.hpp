@@ -3,19 +3,22 @@
 #include <cstdio>
 #include <string>
 #include <vector>
+#include <map>
 #include <fstream>
+#include <algorithm>
 #include <filesystem>
+
+namespace fs = std::filesystem;
 
 class PathComparator
 {
-    typedef std::filesystem::path sfp;
+    typedef fs::path sfp;
 
     static constexpr const char *directoryNamePrefix = " Directory of ";
     static constexpr const char *dirMarker = "<DIR>";
 
     struct FileData
     {
-        std::string name;
         std::string mod_date;
         std::string mod_time;
         size_t size;
@@ -23,7 +26,6 @@ class PathComparator
 
     struct DirData
     {
-        std::string name;
         std::string mod_date;
         std::string mod_time;
     };
@@ -31,26 +33,23 @@ class PathComparator
     
     struct DirectoryContent
     {
-        sfp path;
-        std::vector<FileData> files;
-        std::vector<DirData> directories;
+        bool control_val;
+        std::map<std::string, FileData> files;
+        std::map<std::string, DirData> directories;
     };
     
+    static std::map<sfp, DirectoryContent> old_structure;
+    static std::map<sfp, DirectoryContent> new_structure;
+
+
     static inline std::string removeMultipleSpaces(std::string str);
     static inline std::vector<std::string> splitStringBy(std::string str, std::string split_by);
 
-    static std::vector<DirectoryContent> structure1;
-    static std::vector<DirectoryContent> structure2;
+    static std::map<sfp, DirectoryContent> readFileStructure(sfp path);
+    static std::map<sfp, DirectoryContent> readDirStructure(sfp path);
 
-    static std::vector<DirectoryContent> readFileStructure(sfp path);
-    static std::vector<DirectoryContent> readDirStructure(sfp path);
-    
-    static bool compareDirectoryContentObj(const DirectoryContent &a, const DirectoryContent &b);
-    static bool compareDirDataObj(const DirData &a, const DirData &b);
-    static bool compareFileDataObj(const FileData &a, const FileData &b);
-
-    static void compareStructuresData() noexcept;
+    static void compareStructuresData();
 
 public:
-    static void compareStructures(sfp path1, sfp path2) noexcept;
+    static void compareStructures(sfp oldStructurePath, sfp newStructurePath) noexcept;
 };
