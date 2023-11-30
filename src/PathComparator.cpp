@@ -42,14 +42,16 @@ std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::
     std::string buffer;
 
     DirectoryContent dir_content;
-    dir_content.control_val = false;
+    
     sfp dir_name;
+    sfp relative_dir_name;
+
     while(std::getline(file,buffer)){
         if(buffer.empty()) continue;
 
         if(buffer.find(PathComparator::directoryNamePrefix, 0) != std::string::npos){
             // add new Directory
-            if(dir_content.control_val){
+            if(!relative_dir_name.empty()){
                 // first add previous Directory to structure if not empty
                 try
                 {
@@ -61,7 +63,11 @@ std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::
                 }
             }
             dir_content = DirectoryContent();
-            dir_name = buffer.substr(std::string(PathComparator::directoryNamePrefix).size());
+            auto current_path = buffer.substr(std::string(PathComparator::directoryNamePrefix).size());
+            if(relative_dir_name.empty())
+                relative_dir_name = current_path;
+            dir_name = fs::relative(current_path, relative_dir_name);
+            
             // printf("NAME: %s\n", dir_name.string().c_str());
         }
         else if(buffer[0] != ' '){
@@ -105,6 +111,14 @@ std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::
         }
     }
     file.close();
+    try
+    {
+        structure.insert(std::pair<sfp, DirectoryContent>(dir_name, DirectoryContent(dir_content)));
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error("error while inserting dir_content (" + std::string(e.what()) + ")");
+    }
     return structure;
 }
 
@@ -120,11 +134,62 @@ std::map<PathComparator::sfp, PathComparator::DirectoryContent> PathComparator::
 
 
 void PathComparator::compareStructuresData(){
+    // look for deleted files
+    for(const auto &i : PathComparator::old_structure){
+        auto it = PathComparator::new_structure.find(i.first);
+        if(it == PathComparator::new_structure.end()){
+            // dir not found
+            printf("%s was deleted\n", i.first.string().c_str());
+        }
+        else{
+            auto dir_content = PathComparator::new_structure.at(i.first);
+            // for(const auto &j : i.second.directories){
+            //     auto it = dir_content.directories.find(j.first);
+            //     if(it == dir_content.directories.end()){
+            //         // dir not found
+            //         printf("%s was deleted\n", j.first.c_str());
+            //     }
+            // }
+            for(const auto &j : i.second.files){
+                auto it = dir_content.files.find(j.first);
+                if(it == dir_content.files.end()){
+                    // dir not found
+                    printf("%s was deleted\n", j.first.c_str());
+                }
+                else{
+                    auto file_old = j.second;
+                    auto file_new = dir_content.files.at(j.first);
+                    if(file_old.mod_time != file_new.mod_time || file_old.mod_date != file_new.mod_date){
+                        printf("file %s was modified (date)!\n", j.first.c_str());
+                    }
+                    if(file_old.size != file_new.size){
+                        printf("file %s was modified (size)!\n", j.first.c_str());
 
-    // for(const auto &old_dir : PathComparator::old_structure){
-    //     auto it = std::find(PathComparator::new_structure.begin(), PathComparator::new_structure.end(), old_dir);
-    //     if(it != )
-    // }
+                    }
+                }
+            }
+
+        }
+    }
+    
+    // look for new files
+    for(const auto &i : PathComparator::new_structure){
+        auto it = PathComparator::old_structure.find(i.first);
+        if(it == PathComparator::old_structure.end()){
+            // dir not found
+            printf("%s was added\n", i.first.string().c_str());
+        }
+        else{
+            auto dir_content = PathComparator::old_structure.at(i.first);
+            for(const auto &j : dir_content.files){
+                auto it = dir_content.files.find(j.first);
+                if(it == dir_content.files.end()){
+                    // dir not found
+                    printf("%s was added\n", j.first.c_str());
+                }
+            }
+        }
+    }
 
 }
 

@@ -1,0 +1,32 @@
+Folder PATH listing
+Volume serial number is 3A3B-6B8F
+C:\USERS\CEZAR\DOCUMENTS\VSCODE\CPP\PATHCOMPARATOR\RES\ENV2
+|   13477.dat
+|   19210.dat
+|   20283.dat
+|   
++---Reflections
+|   |   14747.dat
+|   |   1512.dat
+|   |   
+|   +---Calendar
+|   +---Workshops
+|           2483.dat
+|           2768.dat
+|           32500.dat
+|           7263.dat
+|           
++---Travel
+    |   11513.dat
+    |   26423.dat
+    |   4285.dat
+    |   8411.dat
+    |   
+    +---Retirement
+        |   17936.dat
+        |   20329.dat
+        |   26306.dat
+        |   26912.dat
+        |   NEW.dat
+        |   
+        +---NEW

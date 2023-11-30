@@ -33,7 +33,6 @@ class PathComparator
     
     struct DirectoryContent
     {
-        bool control_val;
         std::map<std::string, FileData> files;
         std::map<std::string, DirData> directories;
     };
