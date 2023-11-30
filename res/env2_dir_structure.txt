@@ -1,0 +1,72 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 3A3B-6B8F
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:44    <DIR>          ..
+29/11/2023  12:18                 4 13477.dat
+30/11/2023  11:43                15 19210.dat
+29/11/2023  12:18                 4 20283.dat
+30/11/2023  11:43    <DIR>          Reflections
+30/11/2023  11:44    <DIR>          Travel
+               3 File(s)             23 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Reflections
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:43    <DIR>          ..
+29/11/2023  12:18                 4 14747.dat
+29/11/2023  12:18                 4 1512.dat
+30/11/2023  11:43    <DIR>          Calendar
+30/11/2023  11:43    <DIR>          Workshops
+               2 File(s)              8 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Reflections\Calendar
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:43    <DIR>          ..
+               0 File(s)              0 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Reflections\Workshops
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:43    <DIR>          ..
+29/11/2023  12:18                 4 2483.dat
+29/11/2023  12:18                 4 2768.dat
+29/11/2023  12:18                 4 32500.dat
+29/11/2023  12:18                 4 7263.dat
+               4 File(s)             16 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Travel
+
+30/11/2023  11:44    <DIR>          .
+30/11/2023  11:43    <DIR>          ..
+29/11/2023  12:18                 4 11513.dat
+29/11/2023  12:18                 4 26423.dat
+29/11/2023  12:18                 4 4285.dat
+29/11/2023  12:18                 4 8411.dat
+30/11/2023  11:43    <DIR>          Retirement
+               4 File(s)             16 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Travel\Retirement
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:44    <DIR>          ..
+29/11/2023  12:18                 4 17936.dat
+29/11/2023  12:18                 4 20329.dat
+29/11/2023  12:18                 4 26306.dat
+29/11/2023  12:18                 4 26912.dat
+30/11/2023  11:43    <DIR>          NEW
+30/11/2023  11:43                 0 NEW.dat
+               5 File(s)             16 bytes
+
+ Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2\Travel\Retirement\NEW
+
+30/11/2023  11:43    <DIR>          .
+30/11/2023  11:43    <DIR>          ..
+               0 File(s)              0 bytes
+
+     Total Files Listed:
+              18 File(s)             79 bytes
+              20 Dir(s)  336,839,536,640 bytes free
