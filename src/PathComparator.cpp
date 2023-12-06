@@ -181,14 +181,21 @@ PathComparator::DirectoryStructure PathComparator::readDirStructure(sfp path)
     return structure;
 }
 
-void PathComparator::compareFiles(DirectoryElement l_element, DirectoryElement r_element, std::string name)
+void PathComparator::compareFiles(
+    DirectoryElement l_element, 
+    DirectoryElement r_element, 
+    std::string name, 
+    bool save_changes_to_file
+)
 {
+    std::fstream file(PathComparator::updateElementsFile, std::ios::app);
+    
     if (l_element.is_directory || r_element.is_directory)
         return;
     bool print_modified = false;
     if (l_element.mod_time != r_element.mod_time || l_element.mod_date != r_element.mod_date)
     {
-        printf("file %s was modified (modification date", name.c_str());
+        printf("'%s' file was modified (modification date", name.c_str());
         print_modified = true;
     }
     if (l_element.size != r_element.size)
@@ -197,21 +204,47 @@ void PathComparator::compareFiles(DirectoryElement l_element, DirectoryElement r
             printf(" and size");
         else
         {
-            printf("file %s was modified (size", name.c_str());
+            printf("'%s' file was modified (size", name.c_str());
             print_modified = true;
         }
     }
-    if (print_modified)
-        printf("was changed)\n");
+    if (print_modified){
+        printf(" was changed)\n");
+        file << name << std::endl;
+    }
+    file.close();
 }
 
-void PathComparator::compareStructuresData()
+void PathComparator::compareStructuresData(bool save_changes_to_file)
 {
     if (PathComparator::l_struct.empty() || PathComparator::r_struct.empty())
     {
         printf("at least one structure is empty!\n");
         return;
     }
+
+    try
+    {
+        if(fs::exists(PathComparator::deleteElementsFile))
+            fs::remove(PathComparator::deleteElementsFile);
+    }
+    catch(const std::exception& e)
+    {
+        printf("error while deleting %s file (%s)\n", PathComparator::deleteElementsFile, e.what());
+    }
+    
+    try
+    {
+        if(fs::exists(PathComparator::updateElementsFile))
+            fs::remove(PathComparator::updateElementsFile);
+    }
+    catch(const std::exception& e)
+    {
+        printf("error while deleting %s file (%s)\n", PathComparator::updateElementsFile, e.what());
+    }
+
+
+    std::ofstream file(PathComparator::deleteElementsFile);
 
     // look for deleted files
     for (const auto &i : PathComparator::l_struct)
@@ -222,6 +255,7 @@ void PathComparator::compareStructuresData()
         if (it_structure == PathComparator::r_struct.end())
         {
             printf("'%s' directory was deleted\n", i.first.string().c_str());
+            file << i.first.string() << std::endl;;
             continue;
         }
 
@@ -235,14 +269,18 @@ void PathComparator::compareStructuresData()
                     continue;
 
                 printf("'%s' file was deleted\n", (i.first / sfp(j.first)).string().c_str());
+                file << (i.first / sfp(j.first)).string() << std::endl;
                 continue;
             }
 
             auto l_element = j.second;
             auto r_element = it_structure->second.at(j.first);
-            PathComparator::compareFiles(l_element, r_element, j.first);
+            PathComparator::compareFiles(l_element, r_element, (i.first / j.first).string(), save_changes_to_file);
         }
     }
+
+    file.close();
+    file.open(PathComparator::updateElementsFile, std::ios::app);
 
     // look for new files
     for (const auto &i : PathComparator::r_struct)
@@ -254,6 +292,7 @@ void PathComparator::compareStructuresData()
         {
             // dir not found
             printf("'%s' directory was added\n", i.first.string().c_str());
+            file << i.first.string() << std::endl;;
             continue;
         }
 
@@ -267,10 +306,12 @@ void PathComparator::compareStructuresData()
                     continue;
 
                 printf("'%s' file was added\n", (i.first / sfp(j.first)).string().c_str());
+                file << (i.first / sfp(j.first)).string() << std::endl;
                 continue;
             }
         }
     }
+    file.close();
 }
 
 void PathComparator::printStructure(sfp sp, bool new_line){
@@ -279,7 +320,7 @@ void PathComparator::printStructure(sfp sp, bool new_line){
     PathComparator::printStructure(structure, new_line);
 }
 
-void PathComparator::compareStructures(sfp osp, sfp nsp) noexcept
+void PathComparator::compareStructures(sfp osp, sfp nsp, bool save_changes_to_file) noexcept
 {
     try
     {
@@ -305,7 +346,7 @@ void PathComparator::compareStructures(sfp osp, sfp nsp) noexcept
     
     try
     {
-        PathComparator::compareStructuresData();
+        PathComparator::compareStructuresData(save_changes_to_file);
     }
     catch (const std::exception &e)
     {

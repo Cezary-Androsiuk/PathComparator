@@ -16,6 +16,8 @@ class PathComparator
 
     static constexpr const char *directoryNamePrefix = " Directory of ";
     static constexpr const char *dirMarker = "<DIR>";
+    static constexpr const char *deleteElementsFile = "delete_files_list.txt";
+    static constexpr const char *updateElementsFile = "update_files_list.txt";
 
     struct DirectoryElement
     {
@@ -39,11 +41,16 @@ class PathComparator
     static DirectoryStructure readFileStructure(sfp path);
     static DirectoryStructure readDirStructure(sfp path);
 
-    static void compareFiles(DirectoryElement l_element, DirectoryElement r_element, std::string name);
+    static void compareFiles(
+        DirectoryElement l_element, 
+        DirectoryElement r_element, 
+        std::string name, 
+        bool save_changes_to_file
+    );
 
-    static void compareStructuresData();
+    static void compareStructuresData(bool save_changes_to_file);
 
 public:
     static void printStructure(sfp structurePath, bool new_line=false);
-    static void compareStructures(sfp oldStructurePath, sfp newStructurePath) noexcept;
+    static void compareStructures(sfp oldStructurePath, sfp newStructurePath, bool save_changes_to_file = false) noexcept;
 };

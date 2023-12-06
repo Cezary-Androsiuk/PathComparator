@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     else if (argc > 2)
     {
         printf("PathComparator:\n");
-        PathComparator::compareStructures(argv[1], argv[2]);
+        PathComparator::compareStructures(argv[1], argv[2], true);
     }
     else if (argc > 1)
     {
