@@ -17,38 +17,32 @@ class PathComparator
     static constexpr const char *directoryNamePrefix = " Directory of ";
     static constexpr const char *dirMarker = "<DIR>";
 
-    struct FileData
+    struct DirectoryElement
     {
         std::string mod_date;
         std::string mod_time;
         size_t size;
+        bool is_directory;
     };
 
-    struct DirData
-    {
-        std::string mod_date;
-        std::string mod_time;
-    };
+    typedef std::map<std::string, DirectoryElement> DirectoryElements;
+    typedef std::map<sfp, DirectoryElements> DirectoryStructure;
     
-    
-    struct DirectoryContent
-    {
-        std::map<std::string, FileData> files;
-        std::map<std::string, DirData> directories;
-    };
-    
-    static std::map<sfp, DirectoryContent> old_structure;
-    static std::map<sfp, DirectoryContent> new_structure;
+    static DirectoryStructure l_struct;
+    static DirectoryStructure r_struct;
 
 
     static inline std::string removeMultipleSpaces(std::string str);
     static inline std::vector<std::string> splitStringBy(std::string str, std::string split_by);
 
-    static std::map<sfp, DirectoryContent> readFileStructure(sfp path);
-    static std::map<sfp, DirectoryContent> readDirStructure(sfp path);
+    static DirectoryStructure readFileStructure(sfp path);
+    static DirectoryStructure readDirStructure(sfp path);
+
+    static void compareFiles(DirectoryElement l_element, DirectoryElement r_element, std::string name);
 
     static void compareStructuresData();
 
 public:
+    static void printStructure(const DirectoryStructure &_struct);
     static void compareStructures(sfp oldStructurePath, sfp newStructurePath) noexcept;
 };
