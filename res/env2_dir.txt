@@ -4,7 +4,7 @@
  Directory of C:\Users\cezar\Documents\vscode\cpp\PathComparator\res\env2
 
 30/11/2023  11:43    <DIR>          .
-30/11/2023  11:44    <DIR>          ..
+06/12/2023  10:18    <DIR>          ..
 29/11/2023  12:18                 4 13477.dat
 30/11/2023  11:43                15 19210.dat
 29/11/2023  12:18                 4 20283.dat
@@ -69,4 +69,4 @@
 
      Total Files Listed:
               18 File(s)             79 bytes
-              20 Dir(s)  336,839,536,640 bytes free
+              20 Dir(s)  338,888,556,544 bytes free
