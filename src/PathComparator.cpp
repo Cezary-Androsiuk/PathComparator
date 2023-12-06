@@ -4,6 +4,27 @@ PathComparator::DirectoryStructure PathComparator::l_struct = PathComparator::Di
 
 PathComparator::DirectoryStructure PathComparator::r_struct = PathComparator::DirectoryStructure();
 
+void PathComparator::printStructure(const DirectoryStructure &structure, bool new_line)
+{
+    for (const auto &i : structure)
+    {
+        for (const auto &j : i.second)
+        {
+            // if (j.first == "." || j.first == "..")
+            //     continue;
+            printf(
+                "[%s]: %s%s: %s %s %llu\n",
+                i.first.string().c_str(),
+                j.first.c_str(),
+                (j.second.is_directory ? "/" : ""),
+                j.second.mod_date.c_str(),
+                j.second.mod_time.c_str(),
+                j.second.size);
+        }
+    }
+    if(new_line) printf("\n");
+}
+
 inline std::string PathComparator::removeMultipleSpaces(std::string str)
 {
     auto spacePos(str.find("  "));
@@ -54,7 +75,7 @@ PathComparator::DirectoryStructure PathComparator::readFileStructure(sfp path)
 
         if (buffer.find(directoryNamePrefix, 0) != std::string::npos)
         {
-            // add new Directory
+            // add directory name
             if (!relative_dir_name.empty())
             {
                 // first add previous Directory to structure if not empty
@@ -72,43 +93,43 @@ PathComparator::DirectoryStructure PathComparator::readFileStructure(sfp path)
             if (relative_dir_name.empty())
                 relative_dir_name = current_path;
             dir_name = fs::relative(current_path, relative_dir_name);
-
-            // printf("NAME: %s\n", dir_name.string().c_str());
         }
         else if (buffer[0] != ' ')
         {
-            // printf("%s\n", buffer.c_str());
-            // add file/path to current DirectoryStructure
+            // add directory elements
             auto str = removeMultipleSpaces(buffer);
             auto splited = splitStringBy(str, " ");
             // [0] - date, [1] - time, [2] - <DIR> / size, [3] - name
             if (splited.size() == 4)
             {
-                size_t element_size;
-                bool is_directory;
-                if (splited[2] == dirMarker)
-                {
-                    element_size = 4096;
-                    is_directory = true;
-                }
-                else
-                {
-                    element_size = std::stoull(splited[2]);
-                    is_directory = false;
-                }
+                if(splited[3] == "." || splited[3] == "..")
+                    continue;
 
-                DirectoryElement element;
-                element.mod_date = splited[0];
-                element.mod_time = splited[1];
-                element.size = element_size;
-                element.is_directory = is_directory;
                 try
                 {
+                    size_t element_size;
+                    bool is_directory;
+                    if (splited[2] == dirMarker)
+                    {
+                        element_size = 4096;
+                        is_directory = true;
+                    }
+                    else
+                    {
+                        element_size = std::stoull(splited[2]);
+                        is_directory = false;
+                    }
+
+                    DirectoryElement element;
+                    element.mod_date = splited[0];
+                    element.mod_time = splited[1];
+                    element.size = element_size;
+                    element.is_directory = is_directory;
                     dir_elements.insert(std::pair<std::string, DirectoryElement>(splited[3], element));
                 }
                 catch (const std::exception &e)
                 {
-                    throw std::runtime_error("error while inserting element (" + std::string(e.what()) + ")");
+                    throw std::runtime_error("error while inserting element '" + buffer + "' (" + std::string(e.what()) + ")");
                 }
             }
             else
@@ -135,10 +156,28 @@ PathComparator::DirectoryStructure PathComparator::readDirStructure(sfp path)
     {
         throw std::runtime_error("path is not a directory!");
     }
-    throw std::runtime_error("path is not a directory!");
 
     DirectoryStructure structure;
 
+    std::string tmp_file = "dir_structure.tmp";
+    std::string command = "dir /S /R " + path.string() + " > " + tmp_file;
+    int result = std::system(command.c_str());
+    if(result){
+        printf("error while executing '%s' command with %lld value\n", command.c_str(), result);
+        return structure;
+    }
+
+    structure = PathComparator::readFileStructure(tmp_file);
+
+    try
+    {
+        fs::remove(tmp_file);
+    }
+    catch(const std::exception& e)
+    {
+        printf("error while deleting %s file\n", tmp_file.c_str());
+    }
+    
     return structure;
 }
 
@@ -149,7 +188,7 @@ void PathComparator::compareFiles(DirectoryElement l_element, DirectoryElement r
     bool print_modified = false;
     if (l_element.mod_time != r_element.mod_time || l_element.mod_date != r_element.mod_date)
     {
-        printf("file %s was modified (date", name.c_str());
+        printf("file %s was modified (modification date", name.c_str());
         print_modified = true;
     }
     if (l_element.size != r_element.size)
@@ -163,7 +202,7 @@ void PathComparator::compareFiles(DirectoryElement l_element, DirectoryElement r
         }
     }
     if (print_modified)
-        printf(")\n");
+        printf("was changed)\n");
 }
 
 void PathComparator::compareStructuresData()
@@ -177,8 +216,8 @@ void PathComparator::compareStructuresData()
     // look for deleted files
     for (const auto &i : PathComparator::l_struct)
     {
-        if (i.first == "." || i.first == "..")
-            continue;
+        // if (i.first == "." || i.first == "..")
+        //     continue;
         auto it_structure = PathComparator::r_struct.find(i.first);
         if (it_structure == PathComparator::r_struct.end())
         {
@@ -208,8 +247,8 @@ void PathComparator::compareStructuresData()
     // look for new files
     for (const auto &i : PathComparator::r_struct)
     {
-        if (i.first == "." || i.first == "..")
-            continue;
+        // if (i.first == "." || i.first == "..")
+        //     continue;
         auto it_structure = PathComparator::l_struct.find(i.first);
         if (it_structure == PathComparator::l_struct.end())
         {
@@ -234,24 +273,10 @@ void PathComparator::compareStructuresData()
     }
 }
 
-void PathComparator::printStructure(const DirectoryStructure &structure)
-{
-    for (const auto &i : structure)
-    {
-        for (const auto &j : i.second)
-        {
-            if (j.first == "." || j.first == "..")
-                continue;
-            printf(
-                "[%s]: %s%s: %s %s %llu\n",
-                i.first.string().c_str(),
-                j.first.c_str(),
-                (j.second.is_directory ? "/" : ""),
-                j.second.mod_date.c_str(),
-                j.second.mod_time.c_str(),
-                j.second.size);
-        }
-    }
+void PathComparator::printStructure(sfp sp, bool new_line){
+    auto structure =
+        (fs::is_directory(sp) ? PathComparator::readDirStructure(sp) : PathComparator::readFileStructure(sp));
+    PathComparator::printStructure(structure, new_line);
 }
 
 void PathComparator::compareStructures(sfp osp, sfp nsp) noexcept
@@ -277,7 +302,7 @@ void PathComparator::compareStructures(sfp osp, sfp nsp) noexcept
         fprintf(stderr, "error while reading second structure form: %s (%s)\n", nsp.string().c_str(), e.what());
         return;
     }
-
+    
     try
     {
         PathComparator::compareStructuresData();

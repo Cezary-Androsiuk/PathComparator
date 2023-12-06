@@ -13,19 +13,24 @@
 
 int main(int argc, char **argv)
 {
-    if (argc > 2)
+    if (argc > 3)
+    {
+        printf("CreateTestEnv:\n");
+        CreateTestEnv::createEnv(argv[1]);
+    }
+    else if (argc > 2)
     {
         printf("PathComparator:\n");
         PathComparator::compareStructures(argv[1], argv[2]);
     }
     else if (argc > 1)
     {
-        printf("CreateTestEnv:\n");
-        CreateTestEnv::createEnv(argv[1]);
+        PathComparator::printStructure(argv[1]);
     }
     else
     {
-        printf("\nSecond argument runs CreateTestEnv and is used as a path\n");
-        printf("Two arguments compares two directories\n\n");
+        printf("one argument: prints structure of directory/file containing structure\n");
+        printf("two arguments [old] [new]: comparing structures\n");
+        printf("tree arguments [path] [?] [?]: creates test environment in path\n");
     }
 }

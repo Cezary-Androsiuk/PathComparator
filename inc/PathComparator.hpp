@@ -32,6 +32,7 @@ class PathComparator
     static DirectoryStructure r_struct;
 
 
+    static void printStructure(const DirectoryStructure &_struct, bool new_line=false);
     static inline std::string removeMultipleSpaces(std::string str);
     static inline std::vector<std::string> splitStringBy(std::string str, std::string split_by);
 
@@ -43,6 +44,6 @@ class PathComparator
     static void compareStructuresData();
 
 public:
-    static void printStructure(const DirectoryStructure &_struct);
+    static void printStructure(sfp structurePath, bool new_line=false);
     static void compareStructures(sfp oldStructurePath, sfp newStructurePath) noexcept;
 };
