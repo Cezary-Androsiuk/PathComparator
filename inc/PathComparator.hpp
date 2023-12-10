@@ -9,11 +9,10 @@
 #include <filesystem>
 
 namespace fs = std::filesystem;
+typedef fs::path sfp;
 
 class PathComparator
 {
-    typedef fs::path sfp;
-
     static constexpr const char *directoryNamePrefix = " Directory of ";
     static constexpr const char *dirMarker = "<DIR>";
     static constexpr const char *deleteElementsFile = "delete_files_list.txt";
@@ -49,6 +48,6 @@ class PathComparator
     static void compareStructuresData(bool save_changes_to_file);
 
 public:
-    static void printStructure(std::filesystem::path structurePath, bool new_line = false) noexcept;
-    static void compareStructures(std::filesystem::path oldStructurePath, sfp newStructurePath, bool save_changes_to_file = false) noexcept;
+    static void printStructure(sfp structurePath, bool new_line = false) noexcept;
+    static void compareStructures(sfp oldStructurePath, sfp newStructurePath, bool save_changes_to_file = false) noexcept;
 };

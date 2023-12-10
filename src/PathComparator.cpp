@@ -324,7 +324,7 @@ void PathComparator::compareStructuresData(bool save_changes_to_file)
     file.close();
 }
 
-void PathComparator::printStructure(std::filesystem::path sp, bool new_line) noexcept
+void PathComparator::printStructure(sfp sp, bool new_line) noexcept
 {
     PathComparator::DirectoryStructure structure;
     try
@@ -340,7 +340,7 @@ void PathComparator::printStructure(std::filesystem::path sp, bool new_line) noe
     PathComparator::printStructure(structure, new_line);
 }
 
-void PathComparator::compareStructures(std::filesystem::path osp, sfp nsp, bool save_changes_to_file) noexcept
+void PathComparator::compareStructures(sfp osp, sfp nsp, bool save_changes_to_file) noexcept
 {
     try
     {
