@@ -55,6 +55,7 @@ cmake .. && make && ./main;
 
 <strike>
 ### Linux
+
 - Directory structure by **`tree`** command, env1 | env2 <br/>
 </strike>
 
