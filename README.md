@@ -56,9 +56,13 @@ cmake .. && make && ./main;
 <strike>
 ### Linux
 - Directory structure by **`tree`** command, env1 | env2 <br/>
-![3](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/3.png?raw=true)
-- Directory structure builded by **PathComparator**, env1 | env2 <br/>
-![4](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/4.png?raw=true)
-- Difference in env1 and env2 structures compared by **PathComparator** <br/>
-![5](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/5.png?raw=true)
 </strike>
+![3](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/3.png?raw=true)
+<strike>
+- Directory structure builded by **PathComparator**, env1 | env2 <br/>
+</strike>
+![4](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/4.png?raw=true)
+<strike>
+- Difference in env1 and env2 structures compared by **PathComparator** <br/>
+</strike>
+![5](https://github.com/Cezary-Androsiuk/PathComparator/blob/master/pictures/5.png?raw=true)
