@@ -29,12 +29,11 @@ class PathComparator
 
     typedef std::map<std::string, DirectoryElement> DirectoryElements;
     typedef std::map<sfp, DirectoryElements> DirectoryStructure;
-    
+
     static DirectoryStructure l_struct;
     static DirectoryStructure r_struct;
 
-
-    static void printStructure(const DirectoryStructure &_struct, bool new_line=false);
+    static void printStructure(const DirectoryStructure &_struct, bool new_line = false) noexcept;
     static inline std::string removeMultipleSpaces(std::string str);
     static inline std::vector<std::string> splitStringBy(std::string str, std::string split_by);
 
@@ -42,15 +41,14 @@ class PathComparator
     static DirectoryStructure readDirStructure(sfp path);
 
     static void compareFiles(
-        DirectoryElement l_element, 
-        DirectoryElement r_element, 
-        std::string name, 
-        bool save_changes_to_file
-    );
+        DirectoryElement l_element,
+        DirectoryElement r_element,
+        std::string name,
+        bool save_changes_to_file);
 
     static void compareStructuresData(bool save_changes_to_file);
 
 public:
-    static void printStructure(sfp structurePath, bool new_line=false);
-    static void compareStructures(sfp oldStructurePath, sfp newStructurePath, bool save_changes_to_file = false) noexcept;
+    static void printStructure(std::filesystem::path structurePath, bool new_line = false) noexcept;
+    static void compareStructures(std::filesystem::path oldStructurePath, sfp newStructurePath, bool save_changes_to_file = false) noexcept;
 };
